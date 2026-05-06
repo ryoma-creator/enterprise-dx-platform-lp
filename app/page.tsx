@@ -178,39 +178,38 @@ export default function NextGrowLP() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative pt-16 overflow-hidden">
-        {/* 背景画像：テキストなし実写 */}
+      <section className="relative pt-16 overflow-hidden bg-white">
+        {/* 背景画像：右寄せで表示 */}
         <div className="absolute inset-0">
           <Image src="/images/city_sky.png" alt="NextGrow DX支援" fill
-            className="object-cover object-center" priority />
-          {/* ベースレイヤー：全面を均一に暗くして建物の光を抑える */}
-          <div className="absolute inset-0 bg-slate-950/78" />
-          {/* 方向グラデーション：左（テキスト側）を特に濃く */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/92 via-blue-950/70 to-transparent" />
+            className="object-cover object-right-center" priority />
+          {/* 白グラデーション：左（テキスト側）から右（写真側）へフェード */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/10" />
+          {/* 上下のフェード */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/30" />
         </div>
-        <div className="absolute top-1/4 right-1/3 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-6 py-24 flex flex-col lg:flex-row items-center gap-10">
-          {/* テキスト */}
+          {/* テキスト（ダーク） */}
           <div className="flex-1 text-center lg:text-left">
             <GsapAnimatedElement variant="slideIn" duration={0.8} delay={0.1}>
-              <span className="inline-block text-blue-300 text-xs font-bold tracking-widest uppercase mb-5 border border-blue-400/40 px-3 py-1 rounded-full">
+              <span className="inline-block text-blue-600 text-xs font-bold tracking-widest uppercase mb-5 border border-blue-200 bg-blue-50 px-3 py-1 rounded-full">
                 DX支援サービス
               </span>
             </GsapAnimatedElement>
 
             <GsapAnimatedElement variant="default" duration={0.8} delay={0.2}>
-              <h1 className="text-5xl lg:text-6xl font-black text-white leading-tight mb-5">
+              <h1 className="text-5xl lg:text-6xl font-black text-gray-900 leading-tight mb-5">
                 DXで、ビジネスに
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-300 to-sky-400">
+                <span className="text-blue-600">
                   次の成長を。
                 </span>
               </h1>
             </GsapAnimatedElement>
 
             <GsapAnimatedElement variant="fadeIn" duration={1} delay={0.45}>
-              <p className="text-blue-100/80 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
+              <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
                 業務のデジタル化からシステム開発まで、<br className="hidden sm:block" />
                 貴社の課題に寄り添い、成果につながるDXを実現します。
               </p>
@@ -218,10 +217,10 @@ export default function NextGrowLP() {
 
             <GsapAnimatedElement variant="scaleUp" duration={0.6} delay={0.65}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
-                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:-translate-y-0.5">
+                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 hover:-translate-y-0.5">
                   無料相談を予約する →
                 </a>
-                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white hover:border-white/60 hover:bg-white/5 font-bold rounded-xl transition-all">
+                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-300 text-gray-700 hover:border-blue-400 hover:text-blue-600 font-bold rounded-xl transition-all bg-white/70 backdrop-blur-sm">
                   ↓ 資料をダウンロードする
                 </a>
               </div>
@@ -230,8 +229,8 @@ export default function NextGrowLP() {
             <GsapAnimatedElement variant="fadeIn" duration={1} delay={0.85}>
               <div className="flex flex-wrap gap-5 justify-center lg:justify-start">
                 {['課題発見から伴走支援', '最短2週間でプロトタイプ開発', '導入後の活用までサポート'].map((badge) => (
-                  <span key={badge} className="flex items-center gap-2 text-sm text-blue-200">
-                    <span className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0">✓</span>
+                  <span key={badge} className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0">✓</span>
                     {badge}
                   </span>
                 ))}
@@ -239,9 +238,9 @@ export default function NextGrowLP() {
             </GsapAnimatedElement>
           </div>
 
-          {/* 統計カード */}
+          {/* 統計カード（右側・写真が透けて見える） */}
           <GsapAnimatedElement variant="blurIn" duration={1} delay={0.4} className="flex-shrink-0 w-full max-w-sm">
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+            <div className="bg-white/70 backdrop-blur-md border border-white/80 rounded-2xl p-6 shadow-xl">
               <div className="grid grid-cols-2 gap-3 mb-4">
                 {[
                   { label: '導入実績', value: '200+', unit: '社' },
@@ -249,21 +248,21 @@ export default function NextGrowLP() {
                   { label: 'コスト削減', value: '平均40', unit: '%' },
                   { label: 'サポート', value: '24/7', unit: '' },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-white/10 rounded-xl p-3 text-center">
-                    <div className="text-xl font-black text-white">{stat.value}<span className="text-xs text-blue-300">{stat.unit}</span></div>
-                    <div className="text-xs text-blue-200 mt-0.5">{stat.label}</div>
+                  <div key={stat.label} className="bg-blue-50 rounded-xl p-3 text-center">
+                    <div className="text-xl font-black text-blue-900">{stat.value}<span className="text-xs text-blue-500">{stat.unit}</span></div>
+                    <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
                   </div>
                 ))}
               </div>
-              <div className="bg-white/10 rounded-xl p-4">
+              <div className="bg-slate-50 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-xs text-blue-200 font-medium">現在対応中のプロジェクト</span>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs text-gray-600 font-medium">現在対応中のプロジェクト</span>
                 </div>
                 {['製造業 生産管理DX', 'EC 物流自動化', '医療 電子カルテ統合'].map((proj) => (
-                  <div key={proj} className="flex items-center gap-2 py-1.5 border-b border-white/10 last:border-0">
-                    <span className="w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0" />
-                    <span className="text-sm text-white/80">{proj}</span>
+                  <div key={proj} className="flex items-center gap-2 py-1.5 border-b border-gray-100 last:border-0">
+                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                    <span className="text-sm text-gray-700">{proj}</span>
                   </div>
                 ))}
               </div>
