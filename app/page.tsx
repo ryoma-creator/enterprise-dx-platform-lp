@@ -220,10 +220,13 @@ export default function NextGrowLP() {
 
             <GsapAnimatedElement variant="scaleUp" duration={0.6} delay={0.65}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
-                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 hover:-translate-y-0.5">
-                  無料相談を予約する →
+                <a href="#" className="relative group overflow-hidden flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-white shadow-lg shadow-blue-500/25 hover:-translate-y-0.5 transition-all duration-300">
+                  <div className="absolute inset-0 bg-blue-600 transition-opacity duration-300 group-hover:opacity-0" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 blur-xl bg-gradient-to-r from-blue-400 via-violet-400 to-cyan-300 opacity-0 group-hover:opacity-50 transition-opacity duration-300 scale-110" />
+                  <span className="relative">無料相談を予約する →</span>
                 </a>
-                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-300 text-gray-700 hover:border-blue-400 hover:text-blue-600 font-bold rounded-xl transition-all bg-white/70 backdrop-blur-sm">
+                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-gray-300 text-gray-700 hover:border-blue-400 hover:text-blue-600 font-bold rounded-xl transition-all bg-white/80 backdrop-blur-sm hover:bg-white/90">
                   ↓ 資料をダウンロードする
                 </a>
               </div>
@@ -464,11 +467,21 @@ export default function NextGrowLP() {
             </h2>
             <p className="text-blue-200/80 text-lg mb-10">まずは無料相談で、貴社の課題をお聞かせください。</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="#" className="flex items-center justify-center gap-2 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 text-base">
-                📅 無料相談を予約する
+              {/* グラデーション光るボタン（プライマリ） */}
+              <a href="#" className="relative group overflow-hidden flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-base text-white shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="absolute inset-0 bg-blue-600 transition-opacity duration-300 group-hover:opacity-0" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 blur-xl bg-gradient-to-r from-blue-400 via-violet-400 to-cyan-300 opacity-0 group-hover:opacity-60 transition-opacity duration-300 scale-110" />
+                <span className="relative flex items-center gap-2">
+                  無料相談を予約する →
+                </span>
               </a>
-              <a href="#" className="flex items-center justify-center gap-2 px-10 py-4 border-2 border-white/20 text-white hover:border-white/50 hover:bg-white/5 font-bold rounded-xl transition-all text-base">
-                📄 資料をダウンロードする
+              {/* グラデーション光るボタン（セカンダリ） */}
+              <a href="#" className="relative group overflow-hidden flex items-center justify-center gap-2 px-10 py-4 rounded-xl font-bold text-base border-2 border-white/25 text-white hover:-translate-y-0.5 transition-all duration-300">
+                <div className="absolute inset-0 bg-transparent transition-opacity duration-300 group-hover:opacity-0" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/15 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 blur-xl bg-white/20 opacity-0 group-hover:opacity-50 transition-opacity duration-300" />
+                <span className="relative">資料をダウンロードする ↓</span>
               </a>
             </div>
           </FadeUp>
