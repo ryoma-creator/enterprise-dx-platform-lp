@@ -63,7 +63,10 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       </button>
       <motion.div initial={false} animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
         transition={{ duration: 0.28 }} className="overflow-hidden">
-        <p className="pb-4 text-sm text-gray-600 leading-relaxed">{a}</p>
+        <div className="flex gap-3 pb-5 pt-1">
+          <span className="text-sm font-black text-blue-600 flex-shrink-0 mt-0.5">A.</span>
+          <p className="text-sm text-gray-600 leading-relaxed">{a}</p>
+        </div>
       </motion.div>
     </div>
   )
