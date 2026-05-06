@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Image from 'next/image'
+import Link from 'next/link'
 import { FiAlertTriangle, FiMonitor, FiHelpCircle, FiTrendingDown, FiUsers,
   FiSearch, FiCode, FiRefreshCw, FiLifeBuoy } from 'react-icons/fi'
 import GsapAnimatedElement from '@/components/scroll/GsapAnimatedElement'
@@ -73,7 +74,13 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 // ── データ定義 ────────────────────────────
-const NAV_LINKS = ['サービス', '導入事例', '選ばれる理由', '料金プラン', 'よくある質問']
+const NAV_LINKS = [
+  { label: 'サービス',    href: '#services' },
+  { label: '導入事例',   href: '/cases' },
+  { label: '選ばれる理由', href: '#reasons' },
+  { label: '料金プラン', href: '#pricing' },
+  { label: 'よくある質問', href: '#faq' },
+]
 
 const PAIN_POINTS = [
   { Icon: FiAlertTriangle, color: '#EF4444', bg: '#FEF2F2', text: '業務がアナログで\n非効率になっている' },
@@ -142,8 +149,8 @@ export default function NextGrowLP() {
 
           <ul className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
-              <li key={link}>
-                <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">{link}</a>
+              <li key={link.label}>
+                <Link href={link.href} className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -170,7 +177,7 @@ export default function NextGrowLP() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             className="lg:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-4">
             {NAV_LINKS.map((link) => (
-              <a key={link} href="#" className="block text-sm text-gray-700 font-medium">{link}</a>
+              <Link key={link.label} href={link.href} className="block text-sm text-gray-700 font-medium">{link.label}</Link>
             ))}
             <div className="pt-2 space-y-2">
               <a href="#" className="block text-center text-sm px-4 py-2.5 border border-gray-300 rounded-lg">資料ダウンロード</a>
