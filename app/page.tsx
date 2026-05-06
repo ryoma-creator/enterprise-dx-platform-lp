@@ -5,6 +5,8 @@ import { motion, useInView } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Image from 'next/image'
+import { FiAlertTriangle, FiMonitor, FiHelpCircle, FiTrendingDown, FiUsers,
+  FiSearch, FiCode, FiRefreshCw, FiLifeBuoy } from 'react-icons/fi'
 import GsapAnimatedElement from '@/components/scroll/GsapAnimatedElement'
 
 // ── アニメーションラッパー ────────────────────────────
@@ -71,18 +73,18 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 const NAV_LINKS = ['サービス', '導入事例', '選ばれる理由', '料金プラン', 'よくある質問']
 
 const PAIN_POINTS = [
-  { icon: '😓', text: '業務がアナログで\n非効率になっている' },
-  { icon: '💻', text: 'システムを導入したが\n使いこなせていない' },
-  { icon: '🤔', text: 'DXを進めたいが\n何から始めればいいかわからない' },
-  { icon: '💰', text: '開発コストや期間が\n見えず不安' },
-  { icon: '🤝', text: '信頼できるパートナーに\n出会えていない' },
+  { Icon: FiAlertTriangle, color: '#EF4444', bg: '#FEF2F2', text: '業務がアナログで\n非効率になっている' },
+  { Icon: FiMonitor,       color: '#3B82F6', bg: '#EFF6FF', text: 'システムを導入したが\n使いこなせていない' },
+  { Icon: FiHelpCircle,    color: '#8B5CF6', bg: '#F5F3FF', text: 'DXを進めたいが\n何から始めればいいかわからない' },
+  { Icon: FiTrendingDown,  color: '#F59E0B', bg: '#FFFBEB', text: '開発コストや期間が\n見えず不安' },
+  { Icon: FiUsers,         color: '#10B981', bg: '#ECFDF5', text: '信頼できるパートナーに\n出会えていない' },
 ]
 
 const SERVICES = [
-  { icon: '💡', title: 'コンサルティング', desc: '現状分析から課題を明確化し、成果につながるDX戦略をご提案します。' },
-  { icon: '⚙️', title: 'システム開発', desc: '業務にフィットしたシステムをオーダーメイドで開発。迅速にスピーディに対応します。' },
-  { icon: '🔄', title: '業務改善・自動化', desc: 'RPAやSaaSを活用し、業務の自動化・効率化を実現します。' },
-  { icon: '🛟', title: '運用・サポート', desc: '導入後の運用支援から改善提案まで、伴走型チームが一貫してサポートします。' },
+  { Icon: FiSearch,    title: 'コンサルティング', desc: '現状分析から課題を明確化し、成果につながるDX戦略をご提案します。' },
+  { Icon: FiCode,      title: 'システム開発', desc: '業務にフィットしたシステムをオーダーメイドで開発。迅速にスピーディに対応します。' },
+  { Icon: FiRefreshCw, title: '業務改善・自動化', desc: 'RPAやSaaSを活用し、業務の自動化・効率化を実現します。' },
+  { Icon: FiLifeBuoy,  title: '運用・サポート', desc: '導入後の運用支援から改善提案まで、伴走型チームが一貫してサポートします。' },
 ]
 
 const REASONS = [
@@ -176,17 +178,19 @@ export default function NextGrowLP() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative min-h-screen pt-16 overflow-hidden">
-        {/* 背景画像（GPT生成） */}
+      <section className="relative pt-16 overflow-hidden">
+        {/* 背景画像：テキストなし実写 */}
         <div className="absolute inset-0">
-          <Image src="/images/hero-bg.png" alt="NextGrow DX支援" fill className="object-cover object-center" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-blue-950/80 to-blue-900/50" />
-          <div className="absolute inset-0 opacity-[0.08]"
-            style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+          <Image src="/images/city_sky.png" alt="NextGrow DX支援" fill
+            className="object-cover object-center" priority />
+          {/* ベースレイヤー：全面を均一に暗くして建物の光を抑える */}
+          <div className="absolute inset-0 bg-slate-950/78" />
+          {/* 方向グラデーション：左（テキスト側）を特に濃く */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/92 via-blue-950/70 to-transparent" />
         </div>
-        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 right-1/3 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-32 flex flex-col lg:flex-row items-center gap-12">
+        <div className="relative max-w-6xl mx-auto px-6 py-24 flex flex-col lg:flex-row items-center gap-10">
           {/* テキスト */}
           <div className="flex-1 text-center lg:text-left">
             <GsapAnimatedElement variant="slideIn" duration={0.8} delay={0.1}>
@@ -267,12 +271,6 @@ export default function NextGrowLP() {
           </GsapAnimatedElement>
         </div>
 
-        {/* 波形 */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <path d="M0 60L60 50C120 40 240 20 360 15C480 10 600 20 720 28C840 36 960 48 1080 50C1200 52 1320 42 1380 37L1440 32V60H0Z" fill="#f8fafc" />
-          </svg>
-        </div>
       </section>
 
       {/* ── 課題提示 ── */}
@@ -286,8 +284,11 @@ export default function NextGrowLP() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
             {PAIN_POINTS.map((item, i) => (
               <FadeUp key={i} delay={i * 0.08}>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all h-full">
-                  <div className="text-3xl mb-3">{item.icon}</div>
+                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all h-full flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: item.bg }}>
+                    <item.Icon size={22} style={{ color: item.color }} />
+                  </div>
                   <p className="text-xs text-gray-700 leading-relaxed font-medium whitespace-pre-line">{item.text}</p>
                 </div>
               </FadeUp>
@@ -315,8 +316,10 @@ export default function NextGrowLP() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {SERVICES.map((svc, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <div className="border border-white/10 rounded-2xl p-6 hover:border-blue-400/60 hover:bg-white/5 transition-all group h-full flex flex-col gap-3">
-                  <span className="text-3xl group-hover:scale-110 transition-transform inline-block w-fit">{svc.icon}</span>
+                <div className="border border-white/10 rounded-2xl p-6 hover:border-blue-400/60 hover:bg-white/5 transition-all group h-full flex flex-col gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
+                    <svc.Icon size={20} className="text-blue-300" />
+                  </div>
                   <h3 className="text-white font-bold text-base">{svc.title}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{svc.desc}</p>
                 </div>
