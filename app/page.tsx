@@ -227,9 +227,9 @@ export default function NextGrowLP() {
             </GsapAnimatedElement>
 
             <GsapAnimatedElement variant="fadeIn" duration={1} delay={0.85}>
-              <div className="flex flex-wrap gap-5 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 {['課題発見から伴走支援', '最短2週間でプロトタイプ開発', '導入後の活用までサポート'].map((badge) => (
-                  <span key={badge} className="flex items-center gap-2 text-sm text-gray-600">
+                  <span key={badge} className="flex items-center gap-2 text-sm text-gray-700 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
                     <span className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0">✓</span>
                     {badge}
                   </span>
