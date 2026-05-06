@@ -183,10 +183,10 @@ export default function NextGrowLP() {
         <div className="absolute inset-0">
           <Image src="/images/city_sky.png" alt="NextGrow DX支援" fill
             className="object-cover object-right-center" priority />
-          {/* 白グラデーション：左（テキスト側）から右（写真側）へフェード */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/10" />
-          {/* 上下のフェード */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/30" />
+          {/* 白グラデーション：左35%は白、そこから急速にフェードアウト */}
+          <div className="absolute inset-0" style={{
+            background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 30%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.1) 65%, rgba(255,255,255,0) 75%)'
+          }} />
         </div>
 
         <div className="relative max-w-6xl mx-auto px-6 py-24 flex flex-col lg:flex-row items-center gap-10">
@@ -238,38 +238,30 @@ export default function NextGrowLP() {
             </GsapAnimatedElement>
           </div>
 
-          {/* 統計カード（右側・写真が透けて見える） */}
-          <GsapAnimatedElement variant="blurIn" duration={1} delay={0.4} className="flex-shrink-0 w-full max-w-sm">
-            <div className="bg-white/70 backdrop-blur-md border border-white/80 rounded-2xl p-6 shadow-xl">
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {[
-                  { label: '導入実績', value: '200+', unit: '社' },
-                  { label: '顧客満足度', value: '98', unit: '%' },
-                  { label: 'コスト削減', value: '平均40', unit: '%' },
-                  { label: 'サポート', value: '24/7', unit: '' },
-                ].map((stat) => (
-                  <div key={stat.label} className="bg-blue-50 rounded-xl p-3 text-center">
-                    <div className="text-xl font-black text-blue-900">{stat.value}<span className="text-xs text-blue-500">{stat.unit}</span></div>
-                    <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="bg-slate-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs text-gray-600 font-medium">現在対応中のプロジェクト</span>
-                </div>
-                {['製造業 生産管理DX', 'EC 物流自動化', '医療 電子カルテ統合'].map((proj) => (
-                  <div key={proj} className="flex items-center gap-2 py-1.5 border-b border-gray-100 last:border-0">
-                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{proj}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </GsapAnimatedElement>
         </div>
 
+      </section>
+
+      {/* ── 実績バー ── */}
+      <section className="py-10 bg-white border-y border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 divide-x divide-gray-100">
+            {[
+              { value: '200', suffix: '+', unit: '社', label: '導入実績' },
+              { value: '98', suffix: '', unit: '%', label: '顧客満足度' },
+              { value: '40', suffix: '', unit: '%平均', label: 'コスト削減実績' },
+              { value: '2', suffix: '', unit: '週間〜', label: 'プロトタイプ開発' },
+            ].map((stat, i) => (
+              <div key={i} className="text-center px-4">
+                <div className="text-3xl font-black text-blue-600 mb-1">
+                  <CountUp end={Number(stat.value)} />{stat.suffix}
+                  <span className="text-lg ml-0.5">{stat.unit}</span>
+                </div>
+                <div className="text-xs text-gray-500 font-medium">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── 課題提示 ── */}
