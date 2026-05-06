@@ -1,101 +1,500 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState, useRef, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
+import Image from 'next/image'
+import GsapAnimatedElement from '@/components/scroll/GsapAnimatedElement'
+
+// ── アニメーションラッパー ────────────────────────────
+function FadeUp({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }} className={className}>
+      {children}
+    </motion.div>
+  )
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  return (
+    <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.8, delay, ease: 'easeOut' }} className={className}>
+      {children}
+    </motion.div>
+  )
+}
+
+// ── カウントアップ ────────────────────────────
+function CountUp({ end, suffix = '' }: { end: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+  useEffect(() => {
+    if (!inView) return
+    let current = 0
+    const step = (end / 1800) * 16
+    const timer = setInterval(() => {
+      current += step
+      if (current >= end) { setCount(end); clearInterval(timer) }
+      else setCount(Math.floor(current))
+    }, 16)
+    return () => clearInterval(timer)
+  }, [inView, end])
+  return <span ref={ref}>{count}{suffix}</span>
+}
+
+// ── FAQ ────────────────────────────
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="border-b border-gray-200">
+      <button onClick={() => setOpen(!open)}
+        className="w-full flex justify-between items-center py-4 text-left gap-4 hover:text-blue-700 transition-colors">
+        <span className="text-sm font-medium text-gray-800">Q. {q}</span>
+        <span className="text-blue-600 text-xl flex-shrink-0 font-light">{open ? '−' : '+'}</span>
+      </button>
+      <motion.div initial={false} animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.28 }} className="overflow-hidden">
+        <p className="pb-4 text-sm text-gray-600 leading-relaxed">{a}</p>
+      </motion.div>
+    </div>
+  )
+}
+
+// ── データ定義 ────────────────────────────
+const NAV_LINKS = ['サービス', '導入事例', '選ばれる理由', '料金プラン', 'よくある質問']
+
+const PAIN_POINTS = [
+  { icon: '😓', text: '業務がアナログで\n非効率になっている' },
+  { icon: '💻', text: 'システムを導入したが\n使いこなせていない' },
+  { icon: '🤔', text: 'DXを進めたいが\n何から始めればいいかわからない' },
+  { icon: '💰', text: '開発コストや期間が\n見えず不安' },
+  { icon: '🤝', text: '信頼できるパートナーに\n出会えていない' },
+]
+
+const SERVICES = [
+  { icon: '💡', title: 'コンサルティング', desc: '現状分析から課題を明確化し、成果につながるDX戦略をご提案します。' },
+  { icon: '⚙️', title: 'システム開発', desc: '業務にフィットしたシステムをオーダーメイドで開発。迅速にスピーディに対応します。' },
+  { icon: '🔄', title: '業務改善・自動化', desc: 'RPAやSaaSを活用し、業務の自動化・効率化を実現します。' },
+  { icon: '🛟', title: '運用・サポート', desc: '導入後の運用支援から改善提案まで、伴走型チームが一貫してサポートします。' },
+]
+
+const REASONS = [
+  { num: '01', title: '成果にこだわるDX支援', desc: '単なるシステム導入ではなく、ビジネスの成果に直結するDXを実現します。' },
+  { num: '02', title: '豊富な実績と専門性', desc: '多様な業種・規模のDX支援実績をもとに、最適なソリューションをご提供します。' },
+  { num: '03', title: '伴走型のサポート体制', desc: '課題発見から導入・運用・保守まで、専任チームが一貫してサポートします。' },
+]
+
+const RESULTS = [
+  { company: 'A社様（製造業）', title: '生産管理システムの刷新', metric: 40, unit: '%', label: '業務効率改善', from: 'from-blue-50', to: 'to-indigo-50', accent: 'text-blue-600' },
+  { company: 'B社様（EC業界）', title: 'ECサイトの構築・運用支援', metric: 150, unit: '%', label: '売上向上', from: 'from-emerald-50', to: 'to-teal-50', accent: 'text-emerald-600' },
+  { company: 'C社様（物流）', title: 'RPA導入による業務自動化', metric: 800, unit: '万円', label: '年間コスト削減', from: 'from-purple-50', to: 'to-violet-50', accent: 'text-purple-600' },
+]
+
+const STEPS = [
+  { num: '01', icon: '✉️', title: 'お問い合わせ', desc: 'まずはお気軽にご相談ください。' },
+  { num: '02', icon: '🔍', title: 'ヒアリング・\n課題分析', desc: '貴社の課題をヒアリングし明確化します。' },
+  { num: '03', icon: '📋', title: 'ご提案・\nお見積り', desc: '最適なプランとお見積りをご提案します。' },
+  { num: '04', icon: '💻', title: '開発・導入', desc: '最短2週間でのプロト開発も可能です。' },
+  { num: '05', icon: '📈', title: '運用・改善\nサポート', desc: '導入後も伴走し成果を最大化します。' },
+]
+
+const FAQS = [
+  { q: '相談や見積もりは無料ですか？', a: 'はい、初回相談・お見積りはすべて無料です。まずはお気軽にご連絡ください。' },
+  { q: 'どのような業種に対応していますか？', a: '製造業・小売・物流・医療・サービス業など幅広い業種でのDX支援実績があります。' },
+  { q: '費用はどのくらいかかりますか？', a: '規模や要件によって異なりますが、小規模なRPA導入であれば月額数万円から対応可能です。' },
+  { q: '小規模な会社でも依頼できますか？', a: 'はい、中小企業・スタートアップのDX支援を得意としています。規模に関わらずご相談ください。' },
+  { q: '導入後のサポートはありますか？', a: '運用フェーズも専任チームがサポートします。月次改善提案も含めた伴走支援が可能です。' },
+  { q: 'セキュリティ対策はどうしていますか？', a: '情報セキュリティマネジメントに準拠した体制で開発・運用を行っております。詳細はご相談ください。' },
+]
+
+// ── メインコンポーネント ────────────────────────────
+export default function NextGrowLP() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
+  }, [])
+
+  return (
+    <div className="font-sans text-gray-900 overflow-x-hidden">
+
+      {/* ── ナビゲーション ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white text-xs font-black">N</span>
+            </div>
+            <span className="font-black text-lg text-gray-900">NextGrow</span>
+          </div>
+
+          <ul className="hidden lg:flex items-center gap-8">
+            {NAV_LINKS.map((link) => (
+              <li key={link}>
+                <a href="#" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">{link}</a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="#" className="text-sm px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:border-blue-400 hover:text-blue-600 transition-all font-medium">
+              資料ダウンロード
+            </a>
+            <a href="#" className="text-sm px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium shadow-sm">
+              無料相談を予約する
+            </a>
+          </div>
+
+          <button className="lg:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
+            <div className="space-y-1.5">
+              <span className={`block w-6 h-0.5 bg-gray-800 transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+              <span className={`block w-6 h-0.5 bg-gray-800 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+              <span className={`block w-6 h-0.5 bg-gray-800 transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            </div>
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+        {menuOpen && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="lg:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-4">
+            {NAV_LINKS.map((link) => (
+              <a key={link} href="#" className="block text-sm text-gray-700 font-medium">{link}</a>
+            ))}
+            <div className="pt-2 space-y-2">
+              <a href="#" className="block text-center text-sm px-4 py-2.5 border border-gray-300 rounded-lg">資料ダウンロード</a>
+              <a href="#" className="block text-center text-sm px-4 py-2.5 bg-blue-600 text-white rounded-lg">無料相談を予約する</a>
+            </div>
+          </motion.div>
+        )}
+      </nav>
+
+      {/* ── Hero ── */}
+      <section className="relative min-h-screen pt-16 overflow-hidden">
+        {/* 背景画像（GPT生成） */}
+        <div className="absolute inset-0">
+          <Image src="/images/hero-bg.png" alt="NextGrow DX支援" fill className="object-cover object-center" priority />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-blue-950/80 to-blue-900/50" />
+          <div className="absolute inset-0 opacity-[0.08]"
+            style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+        </div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-6 pt-20 pb-32 flex flex-col lg:flex-row items-center gap-12">
+          {/* テキスト */}
+          <div className="flex-1 text-center lg:text-left">
+            <GsapAnimatedElement variant="slideIn" duration={0.8} delay={0.1}>
+              <span className="inline-block text-blue-300 text-xs font-bold tracking-widest uppercase mb-5 border border-blue-400/40 px-3 py-1 rounded-full">
+                DX支援サービス
+              </span>
+            </GsapAnimatedElement>
+
+            <GsapAnimatedElement variant="default" duration={0.8} delay={0.2}>
+              <h1 className="text-5xl lg:text-6xl font-black text-white leading-tight mb-5">
+                DXで、ビジネスに
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-300 to-sky-400">
+                  次の成長を。
+                </span>
+              </h1>
+            </GsapAnimatedElement>
+
+            <GsapAnimatedElement variant="fadeIn" duration={1} delay={0.45}>
+              <p className="text-blue-100/80 text-lg leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
+                業務のデジタル化からシステム開発まで、<br className="hidden sm:block" />
+                貴社の課題に寄り添い、成果につながるDXを実現します。
+              </p>
+            </GsapAnimatedElement>
+
+            <GsapAnimatedElement variant="scaleUp" duration={0.6} delay={0.65}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
+                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:-translate-y-0.5">
+                  無料相談を予約する →
+                </a>
+                <a href="#" className="flex items-center justify-center gap-2 px-8 py-4 border-2 border-white/30 text-white hover:border-white/60 hover:bg-white/5 font-bold rounded-xl transition-all">
+                  ↓ 資料をダウンロードする
+                </a>
+              </div>
+            </GsapAnimatedElement>
+
+            <GsapAnimatedElement variant="fadeIn" duration={1} delay={0.85}>
+              <div className="flex flex-wrap gap-5 justify-center lg:justify-start">
+                {['課題発見から伴走支援', '最短2週間でプロトタイプ開発', '導入後の活用までサポート'].map((badge) => (
+                  <span key={badge} className="flex items-center gap-2 text-sm text-blue-200">
+                    <span className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0">✓</span>
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            </GsapAnimatedElement>
+          </div>
+
+          {/* 統計カード */}
+          <GsapAnimatedElement variant="blurIn" duration={1} delay={0.4} className="flex-shrink-0 w-full max-w-sm">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {[
+                  { label: '導入実績', value: '200+', unit: '社' },
+                  { label: '顧客満足度', value: '98', unit: '%' },
+                  { label: 'コスト削減', value: '平均40', unit: '%' },
+                  { label: 'サポート', value: '24/7', unit: '' },
+                ].map((stat) => (
+                  <div key={stat.label} className="bg-white/10 rounded-xl p-3 text-center">
+                    <div className="text-xl font-black text-white">{stat.value}<span className="text-xs text-blue-300">{stat.unit}</span></div>
+                    <div className="text-xs text-blue-200 mt-0.5">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-xs text-blue-200 font-medium">現在対応中のプロジェクト</span>
+                </div>
+                {['製造業 生産管理DX', 'EC 物流自動化', '医療 電子カルテ統合'].map((proj) => (
+                  <div key={proj} className="flex items-center gap-2 py-1.5 border-b border-white/10 last:border-0">
+                    <span className="w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0" />
+                    <span className="text-sm text-white/80">{proj}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </GsapAnimatedElement>
+        </div>
+
+        {/* 波形 */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <path d="M0 60L60 50C120 40 240 20 360 15C480 10 600 20 720 28C840 36 960 48 1080 50C1200 52 1320 42 1380 37L1440 32V60H0Z" fill="#f8fafc" />
+          </svg>
+        </div>
+      </section>
+
+      {/* ── 課題提示 ── */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">こんなお悩みありませんか？</h2>
+            <p className="text-center text-gray-500 text-sm mb-14">多くの企業が抱えるDXの課題に、NextGrowは向き合います。</p>
+          </FadeUp>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
+            {PAIN_POINTS.map((item, i) => (
+              <FadeUp key={i} delay={i * 0.08}>
+                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all h-full">
+                  <div className="text-3xl mb-3">{item.icon}</div>
+                  <p className="text-xs text-gray-700 leading-relaxed font-medium whitespace-pre-line">{item.text}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+
+          <FadeUp>
+            <div className="bg-blue-600 rounded-2xl py-5 px-8 text-center">
+              <p className="text-white text-xl font-black">
+                そのお悩み、<span className="text-yellow-300">NextGrow</span>がすべて解決します。
+              </p>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── サービス ── */}
+      <section className="py-24 bg-slate-900">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-white mb-3">NextGrowのDX支援サービス</h2>
+            <div className="w-12 h-1 bg-blue-400 mx-auto mb-14 rounded-full" />
+          </FadeUp>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {SERVICES.map((svc, i) => (
+              <FadeUp key={i} delay={i * 0.1}>
+                <div className="border border-white/10 rounded-2xl p-6 hover:border-blue-400/60 hover:bg-white/5 transition-all group h-full flex flex-col gap-3">
+                  <span className="text-3xl group-hover:scale-110 transition-transform inline-block w-fit">{svc.icon}</span>
+                  <h3 className="text-white font-bold text-base">{svc.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{svc.desc}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 選ばれる理由 ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">選ばれる3つの理由</h2>
+            <div className="w-12 h-1 bg-blue-600 mx-auto mb-16 rounded-full" />
+          </FadeUp>
+
+          <div className="flex flex-col lg:flex-row gap-14 items-center">
+            <div className="flex-1 space-y-8">
+              {REASONS.map((reason, i) => (
+                <FadeUp key={i} delay={i * 0.12}>
+                  <div className="flex gap-5 items-start">
+                    <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100">
+                      <span className="text-white font-black text-sm">{reason.num}</span>
+                    </div>
+                    <div>
+                      <h3 className="font-black text-gray-900 text-lg mb-1">{reason.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">{reason.desc}</p>
+                    </div>
+                  </div>
+                </FadeUp>
+              ))}
+            </div>
+
+            {/* GPT生成写真 */}
+            <FadeIn delay={0.2} className="flex-1 w-full">
+              <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+                <Image src="/images/reason-photo.png" alt="NextGrow ビジネスパートナーシップ" fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent" />
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 導入実績 ── */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">導入事例・実績</h2>
+            <p className="text-center text-gray-500 text-sm mb-14">※掲載許可を得た一部の事例を紹介しています</p>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {RESULTS.map((result, i) => (
+              <FadeUp key={i} delay={i * 0.1}>
+                <div className={`rounded-2xl p-8 bg-gradient-to-br ${result.from} ${result.to} border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{result.company}</div>
+                  <h3 className="font-bold text-gray-900 text-base mb-6 leading-snug">{result.title}</h3>
+                  <div className="flex items-end gap-1">
+                    <span className={`text-5xl font-black ${result.accent}`}><CountUp end={result.metric} /></span>
+                    <span className={`text-xl font-black ${result.accent} mb-1`}>{result.unit}</span>
+                    <span className="text-gray-400 text-sm mb-2 ml-1">↑</span>
+                  </div>
+                  <div className="text-gray-600 text-sm font-medium mt-1">{result.label}</div>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 導入の流れ ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">導入までの流れ</h2>
+            <div className="w-12 h-1 bg-blue-600 mx-auto mb-16 rounded-full" />
+          </FadeUp>
+
+          <div className="relative">
+            <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-blue-100" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              {STEPS.map((step, i) => (
+                <FadeUp key={i} delay={i * 0.1}>
+                  <div className="relative text-center">
+                    <div className="relative z-10 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-100">
+                      <span className="text-2xl">{step.icon}</span>
+                    </div>
+                    <div className="text-xs font-black text-blue-500 mb-1">{step.num}</div>
+                    <h3 className="font-black text-gray-900 text-sm whitespace-pre-line mb-2">{step.title}</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
+                  </div>
+                </FadeUp>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 取引先 ── */}
+      <section className="py-16 bg-slate-50 border-y border-gray-100">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-10">お取引先・導入企業（一部抜粋）</p>
+          </FadeUp>
+          <FadeIn className="flex flex-wrap justify-center gap-4 items-center">
+            {['株式会社〇〇〇〇', '△△△株式会社', 'Sample株式会社', '株式会社□□□', 'Example Co., Ltd.'].map((company) => (
+              <div key={company} className="px-6 py-3 bg-white rounded-xl border border-gray-200 text-gray-400 text-sm font-medium hover:text-gray-600 hover:border-gray-300 transition-all">
+                {company}
+              </div>
+            ))}
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">よくある質問</h2>
+            <div className="w-12 h-1 bg-blue-600 mx-auto mb-14 rounded-full" />
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
+            <FadeUp>{FAQS.slice(0, 3).map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}</FadeUp>
+            <FadeUp delay={0.1}>{FAQS.slice(3).map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}</FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ── フッターCTA ── */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <FadeUp>
+            <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-4 py-1.5 mb-6">
+              <span className="text-yellow-400 text-sm">🏆</span>
+              <span className="text-yellow-300 text-sm font-bold">完全無料 初回相談実施中</span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-black text-white mb-4 leading-tight">
+              DXの第一歩を、<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
+                NextGrowと一緒に。
+              </span>
+            </h2>
+            <p className="text-blue-200/80 text-lg mb-10">まずは無料相談で、貴社の課題をお聞かせください。</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="#" className="flex items-center justify-center gap-2 px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 text-base">
+                📅 無料相談を予約する
+              </a>
+              <a href="#" className="flex items-center justify-center gap-2 px-10 py-4 border-2 border-white/20 text-white hover:border-white/50 hover:bg-white/5 font-bold rounded-xl transition-all text-base">
+                📄 資料をダウンロードする
+              </a>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── フッター ── */}
+      <footer className="bg-slate-950 py-8 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
+              <span className="text-white text-xs font-black">N</span>
+            </div>
+            <span className="font-black text-white">NextGrow</span>
+          </div>
+          <div className="flex flex-wrap gap-6 text-xs text-gray-500 justify-center">
+            <a href="#" className="hover:text-gray-300 transition-colors">プライバシーポリシー</a>
+            <a href="#" className="hover:text-gray-300 transition-colors">特定商取引法に基づく表記</a>
+            <a href="#" className="hover:text-gray-300 transition-colors">お問い合わせ</a>
+          </div>
+          <p className="text-xs text-gray-600">© 2025 NextGrow Inc. All rights reserved.</p>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
