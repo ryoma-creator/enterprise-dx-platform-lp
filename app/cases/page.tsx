@@ -142,7 +142,7 @@ export default function CasesPage() {
             <a href="#" className="hidden sm:block px-4 py-2 border border-gray-300 text-gray-700 hover:border-blue-400 hover:text-blue-600 rounded-lg text-sm font-medium transition-all">
               資料ダウンロード
             </a>
-            <a href="#" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all shadow-sm">
+            <a href="/contact" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all shadow-sm">
               無料相談を予約する
             </a>
           </div>
