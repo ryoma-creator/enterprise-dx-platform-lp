@@ -135,7 +135,7 @@ export default function CasesPage() {
             <Link href="/#services" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">サービス</Link>
             <Link href="/cases" className="text-sm text-blue-600 font-bold border-b-2 border-blue-600 pb-0.5">導入事例</Link>
             <Link href="/#reasons" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">選ばれる理由</Link>
-            <Link href="/#pricing" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">料金プラン</Link>
+            <Link href="/pricing" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">料金プラン</Link>
             <Link href="/#faq" className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium">よくある質問</Link>
           </div>
           <div className="flex items-center gap-3">
