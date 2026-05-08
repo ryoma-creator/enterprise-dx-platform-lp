@@ -217,28 +217,33 @@ export default function PricingPage() {
               const isOtherHovered = hoveredPlan !== null && !isHovered
               return (
                 <FadeUp key={plan.id} delay={i * 0.1} className="flex flex-col">
-                  <div className="relative flex flex-col">
-                    {/* バッジ */}
-                    {plan.badge && (
+                  {/* motion.div がバッジ含む全体を包む → バッジも一緒にスケール */}
+                  <motion.div
+                    onMouseEnter={() => setHoveredPlan(plan.id)}
+                    onMouseLeave={() => setHoveredPlan(null)}
+                    animate={{
+                      scale: isHovered ? 1.04 : isOtherHovered ? 0.97 : 1,
+                      opacity: isOtherHovered ? 0.75 : 1,
+                    }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+                    style={{ transformOrigin: 'bottom center' }}
+                    className="flex flex-col relative"
+                  >
+                    {/* バッジ（または同じ高さのスペーサー） */}
+                    {plan.badge ? (
                       <div className={`flex ${plan.id === 'premium' ? 'justify-end' : 'justify-center'} mb-[-1px] relative z-10`}>
                         <span className={`${plan.badgeColor} text-white text-xs font-bold px-5 py-1.5 rounded-t-lg`}>
                           {plan.badge}
                         </span>
                       </div>
+                    ) : (
+                      <div className="h-[30px]" />
                     )}
 
                     {/* カード本体 */}
-                    <motion.div
-                      onMouseEnter={() => setHoveredPlan(plan.id)}
-                      onMouseLeave={() => setHoveredPlan(null)}
-                      animate={{
-                        scale: isHovered ? 1.04 : isOtherHovered ? 0.97 : 1,
-                        opacity: isOtherHovered ? 0.75 : 1,
-                      }}
-                      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-                      className={`flex flex-col flex-1 rounded-2xl border ${plan.border} ${plan.shadow} p-7 bg-white cursor-pointer relative overflow-hidden
-                        ${plan.id === 'premium' ? 'bg-gradient-to-br from-white via-amber-50/40 to-orange-50/30' : ''}
-                        ${!plan.badge ? 'mt-[30px]' : ''}`}
+                    <div
+                      className={`flex flex-col flex-1 rounded-2xl border ${plan.border} ${plan.shadow} p-7 cursor-pointer relative overflow-hidden
+                        ${plan.id === 'premium' ? 'bg-gradient-to-br from-white via-amber-50/40 to-orange-50/30' : 'bg-white'}`}
                     >
                       {/* Premiumの光彩エフェクト */}
                       {plan.id === 'premium' && (
@@ -297,8 +302,8 @@ export default function PricingPage() {
                           </motion.span>
                         </a>
                       </div>
-                    </motion.div>
-                  </div>
+                    </div>
+                  </motion.div>
                 </FadeUp>
               )
             })}
@@ -414,23 +419,18 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto px-6">
           <FadeUp>
             <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-              <motion.a
-                href="/contact"
-                whileHover={{ scale: 1.02 }}
+              <motion.div
+                whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(37,99,235,0.12)' }}
                 transition={{ type: 'spring', stiffness: 280, damping: 20 }}
-                className="flex-1 flex items-center gap-5 rounded-2xl border border-blue-200 p-7 shadow-sm relative overflow-hidden group cursor-pointer"
+                className="flex-1 flex items-center gap-5 bg-white rounded-2xl border border-gray-200 p-7 shadow-sm cursor-pointer"
               >
-                {/* グラデーション背景（ホバーで出現） */}
-                <div className="absolute inset-0 bg-white transition-opacity duration-300 group-hover:opacity-0" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-blue-100 group-hover:bg-white/20 flex items-center justify-center relative z-10 transition-colors duration-300">
-                  <FiHeadphones size={24} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+                  <FiHeadphones size={24} className="text-blue-600" />
                 </div>
-                <div className="flex-1 relative z-10">
-                  <p className="font-black text-gray-900 group-hover:text-white text-base mb-1 transition-colors duration-300">プランに関するご相談・お見積りはこちら</p>
-                  <p className="text-xs text-gray-500 group-hover:text-blue-100 mb-4 leading-relaxed transition-colors duration-300">専門スタッフが貴社に最適なプランをご提案します。</p>
-                  <span className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 group-hover:bg-white/20 group-hover:border group-hover:border-white/40 text-white text-sm font-bold rounded-full transition-all duration-300">
+                <div className="flex-1">
+                  <p className="font-black text-gray-900 text-base mb-1">プランに関するご相談・お見積りはこちら</p>
+                  <p className="text-xs text-gray-500 mb-4 leading-relaxed">専門スタッフが貴社に最適なプランをご提案します。</p>
+                  <a href="/contact" className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-full transition-all shadow-sm">
                     無料相談を予約する
                     <motion.span
                       className="inline-flex"
@@ -439,9 +439,9 @@ export default function PricingPage() {
                     >
                       <FiArrowRight size={13} />
                     </motion.span>
-                  </span>
+                  </a>
                 </div>
-              </motion.a>
+              </motion.div>
               <div className="lg:w-72 bg-emerald-50 border border-emerald-200 rounded-2xl p-7">
                 <p className="font-black text-emerald-800 text-sm mb-4">まずはお気軽にご相談ください</p>
                 <ul className="space-y-2.5">
