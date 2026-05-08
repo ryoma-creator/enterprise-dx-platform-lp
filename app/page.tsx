@@ -310,7 +310,7 @@ export default function NextGrowLP() {
       </section>
 
       {/* ── サービス ── */}
-      <section className="py-24 bg-slate-900">
+      <section id="services" className="py-24 bg-slate-900">
         <div className="max-w-6xl mx-auto px-6">
           <FadeUp>
             <h2 className="text-3xl font-black text-center text-white mb-3">NextGrowのDX支援サービス</h2>
@@ -334,7 +334,7 @@ export default function NextGrowLP() {
       </section>
 
       {/* ── 選ばれる理由 ── */}
-      <section className="py-24 bg-white">
+      <section id="reasons" className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <FadeUp>
             <h2 className="text-3xl font-black text-center text-gray-900 mb-2">選ばれる3つの理由</h2>
@@ -441,7 +441,7 @@ export default function NextGrowLP() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-24 bg-white">
+      <section id="faq" className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <FadeUp>
             <h2 className="text-3xl font-black text-center text-gray-900 mb-2">よくある質問</h2>
