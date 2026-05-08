@@ -71,41 +71,45 @@ const SUMMARY_STATS = [
 
 function CaseCard({ c, delay }: { c: typeof CASES[number]; delay: number }) {
   return (
-    <FadeUp delay={delay}>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col">
-        {/* サムネイル */}
-        <div className="relative h-52 overflow-hidden">
+    // h-full でグリッドセルを埋める → 全カード同じ高さになる
+    <FadeUp delay={delay} className="h-full">
+      <div className="h-full bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col">
+        {/* サムネイル：固定高さ */}
+        <div className="relative h-52 flex-shrink-0 overflow-hidden">
           <Image src={c.img} alt={c.title} fill className="object-cover hover:scale-105 transition-transform duration-500" />
           <span className="absolute top-3 left-3 text-xs font-bold px-3 py-1 rounded-full bg-blue-600 text-white">
             {c.category}
           </span>
         </div>
 
-        <div className="p-6 flex flex-col gap-4 flex-1">
-          {/* タイトル・会社名 */}
-          <div>
+        <div className="p-6 flex flex-col flex-1">
+          {/* タイトル・会社名：min-h で2行分確保 → 行数が違っても揃う */}
+          <div className="min-h-[4rem] mb-3">
             <h3 className="font-bold text-gray-900 text-base leading-snug whitespace-pre-line mb-1.5">{c.title}</h3>
             <p className="text-xs text-gray-400">{c.company}</p>
           </div>
 
-          {/* 説明 */}
-          <p className="text-sm text-gray-600 leading-relaxed">{c.description}</p>
+          {/* 説明：line-clamp-4 で行数を統一 */}
+          <p className="text-sm text-gray-600 leading-relaxed line-clamp-4 mb-4">{c.description}</p>
 
-          {/* メトリクス */}
-          <div className="grid grid-cols-3 divide-x divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
-            {c.metrics.map((m, i) => (
-              <div key={i} className="py-3 px-2 text-center">
-                <p className="text-[11px] text-gray-500 mb-1">{m.label}</p>
-                <p className="text-lg font-black text-blue-600 leading-none">{m.value}</p>
-                <p className="text-[11px] text-gray-500 mt-0.5">{m.unit}</p>
-              </div>
-            ))}
+          {/* メトリクス：mt-auto で底部方向に寄せ、ラベルに min-h で縦位置を揃える */}
+          <div className="mt-auto">
+            <div className="grid grid-cols-3 divide-x divide-gray-100 border border-gray-100 rounded-xl overflow-hidden mb-4">
+              {c.metrics.map((m, i) => (
+                <div key={i} className="py-3 px-2 text-center">
+                  {/* min-h-[2rem] でラベルの高さを固定 → 数値の縦位置が全セルで揃う */}
+                  <p className="text-[11px] text-gray-500 leading-tight min-h-[2rem] flex items-center justify-center">{m.label}</p>
+                  <p className="text-lg font-black text-blue-600 leading-none">{m.value}</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5">{m.unit}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <a href="#" className="flex items-center justify-center gap-1.5 w-full py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:border-blue-400 hover:text-blue-600 transition-all">
+              詳しく見る <FiArrowRight size={13} />
+            </a>
           </div>
-
-          {/* CTA */}
-          <a href="#" className="mt-auto flex items-center justify-center gap-1.5 w-full py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:border-blue-400 hover:text-blue-600 transition-all">
-            詳しく見る <FiArrowRight size={13} />
-          </a>
         </div>
       </div>
     </FadeUp>
