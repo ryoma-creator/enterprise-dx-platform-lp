@@ -4,7 +4,12 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FiCheck, FiArrowRight, FiHeadphones } from 'react-icons/fi'
+import {
+  FiArrowRight, FiHeadphones, FiCheck, FiX,
+  FiBarChart2, FiMap, FiSettings, FiDatabase,
+  FiTrendingUp, FiUsers, FiMessageSquare, FiMail,
+  FiUserCheck, FiClock,
+} from 'react-icons/fi'
 
 function FadeUp({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null)
@@ -33,13 +38,6 @@ const PLANS = [
     price: '30',
     desc: 'DXをこれから始める企業様におすすめのスモールスタートプラン',
     featured: false,
-    features: [
-      '現状分析・課題整理',
-      'DX戦略ロードマップの策定',
-      '業務プロセスの可視化',
-      '月1回の定例ミーティング',
-      'メールサポート',
-    ],
   },
   {
     id: 'standard',
@@ -48,14 +46,6 @@ const PLANS = [
     price: '80',
     desc: 'DX推進を加速させたい企業様向けの標準プラン',
     featured: true,
-    features: [
-      'Starterのすべての内容',
-      '業務改善・システム導入支援',
-      'データ活用基盤の構築支援',
-      '効果測定・改善提案',
-      '月2回の定例ミーティング',
-      'チャットサポート',
-    ],
   },
   {
     id: 'premium',
@@ -64,16 +54,111 @@ const PLANS = [
     price: '150',
     desc: '全社的なDX変革を実現したい企業様向けの伴走支援プラン',
     featured: false,
-    features: [
-      'Standardのすべての内容',
-      '全社DX戦略の策定・実行支援',
-      'システムのフルカスタマイズ開発',
-      'データ分析・AI活用支援',
-      '専任コンサルタントの伴走支援',
-      '24時間サポート対応',
-    ],
   },
 ]
+
+type Cell = boolean | string
+
+const COMPARISON: {
+  Icon: React.ElementType
+  label: string
+  starter: Cell
+  standard: Cell
+  premium: Cell
+}[] = [
+  {
+    Icon: FiBarChart2,
+    label: '現状分析・課題整理',
+    starter: true,
+    standard: true,
+    premium: true,
+  },
+  {
+    Icon: FiMap,
+    label: 'DX戦略ロードマップの策定',
+    starter: true,
+    standard: true,
+    premium: true,
+  },
+  {
+    Icon: FiSettings,
+    label: '業務プロセスの可視化',
+    starter: true,
+    standard: '対応（詳細分析付き）',
+    premium: '対応（全社プロセス対応）',
+  },
+  {
+    Icon: FiDatabase,
+    label: 'データ活用基盤の構築支援',
+    starter: false,
+    standard: true,
+    premium: true,
+  },
+  {
+    Icon: FiTrendingUp,
+    label: '効果測定・改善提案',
+    starter: false,
+    standard: true,
+    premium: '対応（継続的な改善支援）',
+  },
+  {
+    Icon: FiUsers,
+    label: '定例ミーティング',
+    starter: '対応（月1回）',
+    standard: '対応（月2回）',
+    premium: '対応（月2回）',
+  },
+  {
+    Icon: FiMessageSquare,
+    label: 'チャットサポート',
+    starter: true,
+    standard: true,
+    premium: '対応（優先対応）',
+  },
+  {
+    Icon: FiMail,
+    label: 'メールサポート',
+    starter: true,
+    standard: true,
+    premium: '対応（優先対応）',
+  },
+  {
+    Icon: FiUserCheck,
+    label: '専任コンサルタントの伴走支援',
+    starter: false,
+    standard: false,
+    premium: true,
+  },
+  {
+    Icon: FiClock,
+    label: '24時間サポート対応',
+    starter: false,
+    standard: false,
+    premium: true,
+  },
+]
+
+function Cell({ value, isStandard }: { value: Cell; isStandard?: boolean }) {
+  if (value === false) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+          <FiX size={12} className="text-gray-400" />
+        </div>
+        <span className="text-xs text-gray-400">未対応</span>
+      </div>
+    )
+  }
+  const label = value === true ? '対応' : value
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isStandard ? 'bg-blue-600' : 'bg-emerald-500'}`}>
+        <FiCheck size={12} className="text-white" />
+      </div>
+      <span className={`text-xs font-medium ${isStandard ? 'text-blue-700' : 'text-emerald-700'}`}>{label}</span>
+    </div>
+  )
+}
 
 export default function PricingPage() {
   return (
@@ -114,7 +199,6 @@ export default function PricingPage() {
       {/* ── ヒーロー ── */}
       <section className="pt-16 bg-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 flex flex-col lg:flex-row items-center min-h-[280px]">
-          {/* 左：テキスト */}
           <div className="flex-1 py-12 lg:py-16 pr-0 lg:pr-10">
             <FadeUp>
               <div className="text-xs text-gray-400 mb-5 flex items-center gap-2">
@@ -122,28 +206,16 @@ export default function PricingPage() {
                 <span>›</span>
                 <span className="text-gray-700 font-medium">料金プラン</span>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-5">
-                料金プラン
-              </h1>
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-5">料金プラン</h1>
               <p className="text-gray-500 text-sm leading-relaxed max-w-md">
                 お客様の課題や規模に合わせて、最適なプランをご用意しています。<br />
                 まずはスモールスタートから、事業の成長に合わせて柔軟に拡張が可能です。
               </p>
             </FadeUp>
           </div>
-
-          {/* 右：画像 */}
           <div className="flex-1 relative hidden lg:block h-64 lg:h-72 w-full">
             <div className="absolute inset-0 overflow-hidden rounded-xl">
-              <Image
-                src="/images/pricing-hero.png"
-                alt="料金プラン"
-                fill
-                className="object-cover object-center"
-                priority
-                onError={() => {}}
-              />
-              {/* blue monochrome overlay */}
+              <Image src="/images/pricing-hero.png" alt="料金プラン" fill className="object-cover object-center" priority onError={() => {}} />
               <div className="absolute inset-0 bg-blue-400/40 mix-blend-multiply" />
               <div className="absolute inset-0 bg-white/10" />
             </div>
@@ -152,71 +224,51 @@ export default function PricingPage() {
       </section>
 
       {/* ── プランカード ── */}
-      <section className="py-14 bg-white">
+      <section className="pb-0 pt-10 bg-white">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             {PLANS.map((plan, i) => (
               <FadeUp key={plan.id} delay={i * 0.1} className="flex flex-col">
                 {plan.featured ? (
                   <div className="flex flex-col flex-1">
-                    {/* おすすめバッジ */}
                     <div className="flex justify-center mb-[-1px] relative z-10">
-                      <span className="bg-blue-600 text-white text-xs font-bold px-6 py-1.5 rounded-t-lg">
-                        おすすめ
-                      </span>
+                      <span className="bg-blue-600 text-white text-xs font-bold px-6 py-1.5 rounded-t-lg">おすすめ</span>
                     </div>
-                    {/* カード本体 */}
                     <div className="flex flex-col flex-1 rounded-2xl border-2 border-blue-600 shadow-lg shadow-blue-100 p-7 bg-white">
-                      <div className="text-center mb-6">
+                      <div className="text-center">
                         <h3 className="text-2xl font-black text-blue-600 mb-1">{plan.name}</h3>
-                        <p className="text-xs text-gray-400 font-medium mb-4">{plan.label}</p>
+                        <p className="text-xs text-gray-400 font-medium mb-3">{plan.label}</p>
                         <p className="text-xs text-gray-500 leading-relaxed mb-5">{plan.desc}</p>
-                        <div className="flex items-baseline justify-center gap-1">
+                        <div className="flex items-baseline justify-center gap-1 mb-6">
                           <span className="text-sm font-bold text-blue-600">月額</span>
                           <span className="text-4xl font-black text-gray-900">{plan.price}</span>
                           <span className="text-base font-bold text-gray-600">万円〜</span>
                         </div>
+                        <a href="/contact" className="relative group overflow-hidden flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-bold text-white text-sm hover:-translate-y-0.5 transition-all duration-300">
+                          <div className="absolute inset-0 bg-blue-600 group-hover:opacity-0 transition-opacity duration-300" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <span className="relative">無料相談を予約する</span>
+                          <FiArrowRight size={14} className="relative" />
+                        </a>
                       </div>
-                      <ul className="space-y-3 mb-7 flex-1">
-                        {plan.features.map((f, j) => (
-                          <li key={j} className="flex items-start gap-2.5 text-sm text-gray-700">
-                            <FiCheck size={15} className="text-blue-600 flex-shrink-0 mt-0.5" />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
-                      <a href="#" className="relative group overflow-hidden flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-bold text-white text-sm hover:-translate-y-0.5 transition-all duration-300">
-                        <div className="absolute inset-0 bg-blue-600 group-hover:opacity-0 transition-opacity duration-300" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <span className="relative">無料相談を予約する</span>
-                        <FiArrowRight size={14} className="relative" />
-                      </a>
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-col flex-1 rounded-2xl border border-gray-200 p-7 bg-white mt-[30px]">
-                    <div className="text-center mb-6">
+                    <div className="text-center">
                       <h3 className="text-2xl font-black text-blue-600 mb-1">{plan.name}</h3>
-                      <p className="text-xs text-gray-400 font-medium mb-4">{plan.label}</p>
+                      <p className="text-xs text-gray-400 font-medium mb-3">{plan.label}</p>
                       <p className="text-xs text-gray-500 leading-relaxed mb-5">{plan.desc}</p>
-                      <div className="flex items-baseline justify-center gap-1">
+                      <div className="flex items-baseline justify-center gap-1 mb-6">
                         <span className="text-sm font-bold text-blue-600">月額</span>
                         <span className="text-4xl font-black text-gray-900">{plan.price}</span>
                         <span className="text-base font-bold text-gray-600">万円〜</span>
                       </div>
+                      <a href="/contact" className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full border-2 border-blue-400 text-blue-600 font-bold text-sm hover:bg-blue-50 transition-all">
+                        無料相談を予約する
+                        <FiArrowRight size={13} />
+                      </a>
                     </div>
-                    <ul className="space-y-3 mb-7 flex-1">
-                      {plan.features.map((f, j) => (
-                        <li key={j} className="flex items-start gap-2.5 text-sm text-gray-700">
-                          <FiCheck size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <a href="#" className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full border-2 border-blue-400 text-blue-600 font-bold text-sm hover:bg-blue-50 transition-all">
-                      無料相談を予約する
-                      <FiArrowRight size={13} />
-                    </a>
                   </div>
                 )}
               </FadeUp>
@@ -225,43 +277,101 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── 料金について ── */}
+      {/* ── 機能・サポート比較表 ── */}
+      <section className="py-14 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          <FadeUp>
+            <h2 className="text-xl font-black text-gray-900 mb-8">機能・サポート比較</h2>
+          </FadeUp>
+
+          <FadeUp delay={0.1}>
+            <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+              {/* テーブルヘッダー */}
+              <div className="grid grid-cols-[1fr_120px_140px_120px] bg-white border-b border-gray-200">
+                <div className="px-6 py-4" />
+                <div className="px-4 py-4 text-center">
+                  <p className="text-sm font-black text-blue-600">Starter</p>
+                </div>
+                <div className="px-4 py-4 text-center bg-blue-50 border-x border-blue-100">
+                  <p className="text-sm font-black text-blue-600">Standard</p>
+                  <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">おすすめ</span>
+                </div>
+                <div className="px-4 py-4 text-center">
+                  <p className="text-sm font-black text-blue-600">Premium</p>
+                </div>
+              </div>
+
+              {/* 行 */}
+              {COMPARISON.map((row, i) => (
+                <div
+                  key={i}
+                  className={`grid grid-cols-[1fr_120px_140px_120px] items-center ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} border-b border-gray-100 last:border-0`}
+                >
+                  {/* 機能名 */}
+                  <div className="flex items-center gap-3 px-6 py-4">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                      <row.Icon size={15} className="text-blue-500" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-800">{row.label}</span>
+                  </div>
+
+                  {/* Starter */}
+                  <div className="px-4 py-4 flex justify-center">
+                    <Cell value={row.starter} />
+                  </div>
+
+                  {/* Standard */}
+                  <div className="px-4 py-4 flex justify-center bg-blue-50/50 border-x border-blue-100/60">
+                    <Cell value={row.standard} isStandard />
+                  </div>
+
+                  {/* Premium */}
+                  <div className="px-4 py-4 flex justify-center">
+                    <Cell value={row.premium} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── 底部CTA ── */}
       <section className="py-12 bg-slate-50 border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-6">
           <FadeUp>
-            <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 items-stretch">
 
-              {/* 左：注意書き */}
-              <div className="flex-1">
-                <h3 className="font-black text-gray-900 text-lg mb-2">料金について</h3>
-                <div className="w-8 h-0.5 bg-blue-600 rounded-full mb-5" />
-                <ul className="space-y-3">
-                  {[
-                    '料金はご支援範囲や体制により変動します。詳細はお気軽にお問い合わせください。',
-                    '初期費用は原則不要です。',
-                    '契約期間は3ヶ月単位でのご契約となります。',
-                  ].map((text, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                      <FiCheck size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
-                      {text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* 右：CTAボックス */}
-              <div className="flex-1 flex items-start gap-5">
+              {/* 左：相談CTA */}
+              <div className="flex-1 flex items-center gap-5 bg-white rounded-2xl border border-gray-200 p-7 shadow-sm">
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
                   <FiHeadphones size={24} className="text-blue-600" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="font-black text-gray-900 text-base mb-1">プランに関するご相談・お見積りはこちら</p>
                   <p className="text-xs text-gray-500 mb-4 leading-relaxed">専門スタッフが貴社に最適なプランをご提案します。</p>
-                  <a href="#" className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-full hover:bg-blue-700 transition-all shadow-sm">
+                  <a href="/contact" className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-full hover:bg-blue-700 transition-all shadow-sm">
                     無料相談を予約する
                     <FiArrowRight size={13} />
                   </a>
                 </div>
+              </div>
+
+              {/* 右：注意書き */}
+              <div className="lg:w-72 bg-emerald-50 border border-emerald-200 rounded-2xl p-7">
+                <p className="font-black text-emerald-800 text-sm mb-4">まずはお気軽にご相談ください</p>
+                <ul className="space-y-2.5">
+                  {[
+                    '初期費用は原則不要です',
+                    '契約期間は3ヶ月単位でのご契約となります',
+                    '料金はご支援範囲により変動します',
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs text-emerald-700">
+                      <FiCheck size={13} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
             </div>
