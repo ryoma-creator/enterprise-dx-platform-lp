@@ -8,7 +8,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FiAlertTriangle, FiMonitor, FiHelpCircle, FiTrendingDown, FiUsers,
   FiSearch, FiCode, FiRefreshCw, FiLifeBuoy,
-  FiClipboard, FiTarget, FiDollarSign, FiChevronDown, FiBarChart2 } from 'react-icons/fi'
+  FiClipboard, FiTarget, FiDollarSign, FiChevronDown, FiBarChart2,
+  FiMail, FiTrendingUp } from 'react-icons/fi'
 import GsapAnimatedElement from '@/components/scroll/GsapAnimatedElement'
 
 // ── アニメーションラッパー ────────────────────────────
@@ -132,11 +133,11 @@ const RESULTS = [
 ]
 
 const STEPS = [
-  { num: '01', icon: '✉️', title: 'お問い合わせ', desc: 'まずはお気軽にご相談ください。' },
-  { num: '02', icon: '🔍', title: 'ヒアリング・\n課題分析', desc: '貴社の課題をヒアリングし明確化します。' },
-  { num: '03', icon: '📋', title: 'ご提案・\nお見積り', desc: '最適なプランとお見積りをご提案します。' },
-  { num: '04', icon: '💻', title: '開発・導入', desc: '最短2週間でのプロト開発も可能です。' },
-  { num: '05', icon: '📈', title: '運用・改善\nサポート', desc: '導入後も伴走し成果を最大化します。' },
+  { num: '01', Icon: FiMail,       title: 'お問い合わせ',      desc: 'まずはお気軽にご相談ください。専任スタッフが対応します。' },
+  { num: '02', Icon: FiSearch,     title: 'ヒアリング・\n課題分析', desc: '貴社の課題や現状を詳しくヒアリングし、解決の方向性を明確にします。' },
+  { num: '03', Icon: FiClipboard,  title: 'ご提案・\nお見積り', desc: '課題に最適なプランと施策をご提案し、お見積りをご提示します。' },
+  { num: '04', Icon: FiMonitor,    title: '開発・導入',         desc: '最短2週間での導入も可能です。進捗は定期的にご報告します。' },
+  { num: '05', Icon: FiTrendingUp, title: '運用・改善\nサポート', desc: '導入後も継続的な改善提案とサポートで成果の最大化を支援します。' },
 ]
 
 const FAQS = [
@@ -419,24 +420,34 @@ export default function NextGrowLP() {
       </section>
 
       {/* ── 導入の流れ ── */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-6xl mx-auto px-6">
           <FadeUp>
-            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">導入までの流れ</h2>
-            <div className="w-12 h-1 bg-blue-600 mx-auto mb-16 rounded-full" />
+            <div className="text-center mb-16">
+              <p className="text-xs font-bold text-blue-600 tracking-widest mb-3 flex items-center justify-center gap-1.5">
+                <FiRefreshCw size={12} />PROCESS
+              </p>
+              <h2 className="text-3xl font-black text-blue-950 mb-3">導入までの流れ</h2>
+              <div className="w-10 h-1 bg-blue-600 mx-auto mb-4 rounded-full" />
+              <p className="text-sm text-gray-400">お問い合わせから導入・運用まで、専任担当が伴走支援します。</p>
+            </div>
           </FadeUp>
 
           <div className="relative">
-            <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-blue-100" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {/* 接続ライン（破線） */}
+            <div className="hidden lg:block absolute top-10 left-[calc(10%+2.5rem)] right-[calc(10%+2.5rem)] border-t-2 border-dashed border-blue-200 z-0" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
               {STEPS.map((step, i) => (
                 <FadeUp key={i} delay={i * 0.1}>
-                  <div className="relative text-center">
-                    <div className="relative z-10 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-100">
-                      <span className="text-2xl">{step.icon}</span>
+                  <div className="relative text-center z-10">
+                    {/* 白背景の大きな円アイコン */}
+                    <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-100/60 border border-blue-50">
+                      <step.Icon size={32} className="text-blue-500" />
                     </div>
-                    <div className="text-xs font-black text-blue-500 mb-1">{step.num}</div>
-                    <h3 className="font-black text-gray-900 text-sm whitespace-pre-line mb-2">{step.title}</h3>
+                    {/* ステップ番号 */}
+                    <div className="text-xs font-black text-blue-500 tracking-wider mb-2">{step.num}</div>
+                    <h3 className="font-black text-gray-900 text-sm whitespace-pre-line mb-2 leading-snug">{step.title}</h3>
                     <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
                   </div>
                 </FadeUp>
