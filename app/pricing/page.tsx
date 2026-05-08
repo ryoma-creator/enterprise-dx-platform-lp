@@ -142,10 +142,10 @@ function Cell({ value, isStandard }: { value: Cell; isStandard?: boolean }) {
   if (value === false) {
     return (
       <div className="flex flex-col items-center gap-1">
-        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-          <FiX size={12} className="text-gray-400" />
+        <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+          <FiX size={12} className="text-red-400" />
         </div>
-        <span className="text-xs text-gray-400">未対応</span>
+        <span className="text-xs text-red-400 font-medium">未対応</span>
       </div>
     )
   }
@@ -157,6 +157,22 @@ function Cell({ value, isStandard }: { value: Cell; isStandard?: boolean }) {
       </div>
       <span className={`text-xs font-medium ${isStandard ? 'text-blue-700' : 'text-emerald-700'}`}>{label}</span>
     </div>
+  )
+}
+
+function FadeRow({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-20px' })
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 18 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.38, delay, ease: 'easeOut' }}
+      className={className}
+    >
+      {children}
+    </motion.div>
   )
 }
 
@@ -284,9 +300,9 @@ export default function PricingPage() {
             <h2 className="text-xl font-black text-gray-900 mb-8">機能・サポート比較</h2>
           </FadeUp>
 
-          <FadeUp delay={0.1}>
-            <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-              {/* テーブルヘッダー */}
+          <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            {/* テーブルヘッダー */}
+            <FadeUp delay={0.05}>
               <div className="grid grid-cols-[1fr_120px_140px_120px] bg-white border-b border-gray-200">
                 <div className="px-6 py-4" />
                 <div className="px-4 py-4 text-center">
@@ -300,13 +316,12 @@ export default function PricingPage() {
                   <p className="text-sm font-black text-blue-600">Premium</p>
                 </div>
               </div>
+            </FadeUp>
 
-              {/* 行 */}
-              {COMPARISON.map((row, i) => (
-                <div
-                  key={i}
-                  className={`grid grid-cols-[1fr_120px_140px_120px] items-center ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} border-b border-gray-100 last:border-0`}
-                >
+            {/* 行（スクロールに合わせて1行ずつふわっと表示） */}
+            {COMPARISON.map((row, i) => (
+              <FadeRow key={i} delay={i * 0.04}>
+                <div className={`grid grid-cols-[1fr_120px_140px_120px] items-center ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} border-b border-gray-100 last:border-0`}>
                   {/* 機能名 */}
                   <div className="flex items-center gap-3 px-6 py-4">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
@@ -330,9 +345,9 @@ export default function PricingPage() {
                     <Cell value={row.premium} />
                   </div>
                 </div>
-              ))}
-            </div>
-          </FadeUp>
+              </FadeRow>
+            ))}
+          </div>
         </div>
       </section>
 
