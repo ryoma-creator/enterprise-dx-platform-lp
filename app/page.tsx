@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FiAlertTriangle, FiMonitor, FiHelpCircle, FiTrendingDown, FiUsers,
-  FiSearch, FiCode, FiRefreshCw, FiLifeBuoy } from 'react-icons/fi'
+  FiSearch, FiCode, FiRefreshCw, FiLifeBuoy,
+  FiClipboard, FiTarget, FiDollarSign, FiChevronDown, FiBarChart2 } from 'react-icons/fi'
 import GsapAnimatedElement from '@/components/scroll/GsapAnimatedElement'
 
 // ── アニメーションラッパー ────────────────────────────
@@ -53,22 +54,43 @@ function CountUp({ end, suffix = '' }: { end: number; suffix?: string }) {
 }
 
 // ── FAQ ────────────────────────────
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ Icon, q, a }: { Icon: React.ElementType; q: string; a: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="border-b border-gray-200">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <button onClick={() => setOpen(!open)}
-        className="w-full flex justify-between items-center py-4 text-left gap-4 hover:text-blue-700 transition-colors">
-        <span className="text-sm font-medium text-gray-800">Q. {q}</span>
-        <span className="text-blue-600 text-xl flex-shrink-0 font-light">{open ? '−' : '+'}</span>
-      </button>
-      <motion.div initial={false} animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
-        transition={{ duration: 0.28 }} className="overflow-hidden">
-        <div className="flex gap-3 pb-5 pt-1">
-          <span className="text-sm font-black text-blue-600 flex-shrink-0 mt-0.5">A.</span>
-          <p className="text-sm text-gray-600 leading-relaxed">{a}</p>
+        className="w-full flex items-start gap-4 px-6 py-5 text-left hover:bg-gray-50/60 transition-colors">
+        <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center mt-0.5">
+          <Icon size={17} className="text-slate-500" />
         </div>
-      </motion.div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start gap-2.5">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center mt-0.5">
+              <span className="text-white text-[10px] font-black">Q</span>
+            </span>
+            <span className="font-black text-gray-900 text-[15px] leading-snug pt-0.5">{q}</span>
+          </div>
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div key="a"
+                initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.28, ease: 'easeOut' }}
+                className="overflow-hidden">
+                <div className="flex items-start gap-2.5 mt-3 pt-3 border-t border-gray-100">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center mt-0.5">
+                    <span className="text-white text-[10px] font-black">A</span>
+                  </span>
+                  <p className="text-gray-500 text-sm leading-relaxed">{a}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}
+          className="flex-shrink-0 text-gray-400 mt-2.5">
+          <FiChevronDown size={18} />
+        </motion.span>
+      </button>
     </div>
   )
 }
@@ -118,12 +140,12 @@ const STEPS = [
 ]
 
 const FAQS = [
-  { q: '相談や見積もりは無料ですか？', a: 'はい、初回相談・お見積りはすべて無料です。まずはお気軽にご連絡ください。' },
-  { q: 'どのような業種に対応していますか？', a: '製造業・小売・物流・医療・サービス業など幅広い業種でのDX支援実績があります。' },
-  { q: '費用はどのくらいかかりますか？', a: '規模や要件によって異なりますが、小規模なRPA導入であれば月額数万円から対応可能です。' },
-  { q: '小規模な会社でも依頼できますか？', a: 'はい、中小企業・スタートアップのDX支援を得意としています。規模に関わらずご相談ください。' },
-  { q: '導入後のサポートはありますか？', a: '運用フェーズも専任チームがサポートします。月次改善提案も含めた伴走支援が可能です。' },
-  { q: 'セキュリティ対策はどうしていますか？', a: '情報セキュリティマネジメントに準拠した体制で開発・運用を行っております。詳細はご相談ください。' },
+  { Icon: FiClipboard,    q: '相談や見積もりは無料ですか？',       a: 'はい、初回相談・お見積りはすべて無料です。まずはお気軽にご連絡ください。' },
+  { Icon: FiUsers,        q: 'どのような業種に対応していますか？', a: '製造業・小売・物流・医療・サービス業など幅広い業種でのDX支援実績があります。' },
+  { Icon: FiDollarSign,   q: '費用はどのくらいかかりますか？',     a: '規模や要件によって異なりますが、小規模なRPA導入であれば月額数万円から対応可能です。' },
+  { Icon: FiBarChart2,    q: '小規模な会社でも依頼できますか？',   a: 'はい、中小企業・スタートアップのDX支援を得意としています。規模に関わらずご相談ください。' },
+  { Icon: FiLifeBuoy,     q: '導入後のサポートはありますか？',     a: '運用フェーズも専任チームがサポートします。月次改善提案も含めた伴走支援が可能です。' },
+  { Icon: FiTarget,       q: 'セキュリティ対策はどうしていますか？', a: '情報セキュリティマネジメントに準拠した体制で開発・運用を行っております。詳細はご相談ください。' },
 ]
 
 // ── メインコンポーネント ────────────────────────────
@@ -441,16 +463,19 @@ export default function NextGrowLP() {
       </section>
 
       {/* ── FAQ ── */}
-      <section id="faq" className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="faq" className="py-24 bg-slate-50">
+        <div className="max-w-3xl mx-auto px-6">
           <FadeUp>
-            <h2 className="text-3xl font-black text-center text-gray-900 mb-2">よくある質問</h2>
-            <div className="w-12 h-1 bg-blue-600 mx-auto mb-14 rounded-full" />
+            <h2 className="text-3xl font-black text-center text-blue-950 mb-2">よくある質問</h2>
+            <div className="w-10 h-1 bg-blue-600 mx-auto mb-14 rounded-full" />
           </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16">
-            <FadeUp>{FAQS.slice(0, 3).map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}</FadeUp>
-            <FadeUp delay={0.1}>{FAQS.slice(3).map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}</FadeUp>
+          <div className="flex flex-col gap-4">
+            {FAQS.map((faq, i) => (
+              <FadeUp key={i} delay={i * 0.06}>
+                <FaqItem Icon={faq.Icon} q={faq.q} a={faq.a} />
+              </FadeUp>
+            ))}
           </div>
         </div>
       </section>
