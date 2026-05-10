@@ -1,31 +1,14 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   FiChevronDown, FiArrowRight, FiHeadphones,
   FiBarChart2, FiClipboard, FiTarget, FiUsers, FiMonitor, FiDollarSign,
 } from 'react-icons/fi'
-
-function FadeUp({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay, ease: 'easeOut' }} className={className}>
-      {children}
-    </motion.div>
-  )
-}
-
-const NAV_LINKS = [
-  { label: 'サービス',     href: '/#services' },
-  { label: '導入事例',    href: '/cases' },
-  { label: '選ばれる理由', href: '/#reasons' },
-  { label: '料金プラン',  href: '/pricing' },
-  { label: 'よくある質問', href: '/faq' },
-]
+import { FadeUp } from '@/components/ui/animations'
+import Nav from '@/components/ui/Nav'
+import Footer from '@/components/ui/Footer'
 
 const FAQS = [
   {
@@ -68,52 +51,49 @@ function FaqCard({ Icon, q, a, delay }: { Icon: React.ElementType; q: string; a:
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <button
           onClick={() => setOpen(!open)}
-          className="w-full flex items-start gap-4 px-6 py-5 text-left hover:bg-gray-50/60 transition-colors"
+          aria-expanded={open}
+          className="w-full flex items-center gap-4 px-6 py-5 text-left hover:bg-gray-50/60 transition-colors"
         >
-          {/* 左アイコン */}
-          <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center mt-0.5">
+          <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center">
             <Icon size={18} className="text-slate-500" />
           </div>
-
-          {/* 質問 */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start gap-2.5 mb-0">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center mt-0.5">
-                <span className="text-white text-[10px] font-black">Q</span>
-              </span>
-              <span className="font-black text-gray-900 text-[15px] leading-snug pt-0.5">{q}</span>
-            </div>
-
-            <AnimatePresence initial={false}>
-              {open && (
-                <motion.div
-                  key="answer"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: 'easeOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="flex items-start gap-2.5 mt-3 pt-3 border-t border-gray-100">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center mt-0.5">
-                      <span className="text-white text-[10px] font-black">A</span>
-                    </span>
-                    <p className="text-gray-500 text-sm leading-relaxed">{a}</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="flex-1 min-w-0 flex items-center gap-2.5">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
+              <span className="text-white text-[10px] font-black">Q</span>
+            </span>
+            <span className="font-black text-gray-900 text-[15px] leading-snug">{q}</span>
           </div>
-
-          {/* 矢印 */}
           <motion.span
             animate={{ rotate: open ? 180 : 0 }}
             transition={{ duration: 0.25 }}
-            className="flex-shrink-0 text-gray-400 mt-2.5"
+            className="flex-shrink-0 text-gray-400"
           >
             <FiChevronDown size={18} />
           </motion.span>
         </button>
+
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="answer"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+              className="overflow-hidden"
+            >
+              <div className="flex items-start gap-4 px-6 pb-5 pt-0 border-t border-gray-100">
+                <div className="flex-shrink-0 w-11 h-11" />
+                <div className="flex items-start gap-2.5 pt-4 flex-1">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center mt-0.5">
+                    <span className="text-white text-[10px] font-black">A</span>
+                  </span>
+                  <p className="text-gray-500 text-sm leading-relaxed">{a}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </FadeUp>
   )
@@ -123,43 +103,11 @@ export default function FaqPage() {
   return (
     <div className="font-sans text-gray-900 overflow-x-hidden min-h-screen bg-slate-50">
 
-      {/* ── ナビゲーション ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-black">N</span>
-            </div>
-            <span className="font-black text-lg text-gray-900">NextGrow</span>
-          </Link>
-          <div className="hidden lg:flex items-center gap-7">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.label} href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  link.href === '/faq'
-                    ? 'text-blue-600 border-b-2 border-blue-600 pb-0.5 font-bold'
-                    : 'text-gray-600 hover:text-blue-600'
-                }`}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="#" className="hidden sm:block px-4 py-2 bg-gray-900 text-white hover:bg-gray-700 rounded-lg text-sm font-bold transition-all">
-              資料ダウンロード
-            </a>
-            <a href="/contact" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all shadow-sm">
-              無料相談を予約する
-            </a>
-          </div>
-        </div>
-      </nav>
+      <Nav />
 
-      {/* ── コンテンツ ── */}
       <div className="pt-16">
         <div className="max-w-3xl mx-auto px-6 py-16">
 
-          {/* ヘッダー */}
           <FadeUp>
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-1.5 text-blue-600 text-xs font-bold mb-4">
@@ -175,18 +123,15 @@ export default function FaqPage() {
             </div>
           </FadeUp>
 
-          {/* FAQ一覧 */}
           <div className="flex flex-col gap-4">
             {FAQS.map((faq, i) => (
               <FaqCard key={i} Icon={faq.Icon} q={faq.q} a={faq.a} delay={i * 0.06} />
             ))}
           </div>
 
-          {/* 底部CTA */}
           <FadeUp delay={0.3} className="mt-12">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="flex flex-col sm:flex-row items-center gap-0">
-                {/* 左 */}
                 <div className="flex-1 flex items-center gap-4 px-8 py-7">
                   <div className="flex-shrink-0 w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center">
                     <FiHeadphones size={22} className="text-blue-600" />
@@ -196,11 +141,7 @@ export default function FaqPage() {
                     <p className="text-xs text-gray-400 leading-relaxed">専門スタッフが丁寧にお答えします。<br />些細なことでもお気軽にご相談ください。</p>
                   </div>
                 </div>
-
-                {/* 区切り */}
                 <div className="hidden sm:block w-px h-16 bg-gray-100" />
-
-                {/* 右 */}
                 <div className="flex flex-col items-center gap-2 px-8 py-7">
                   <a href="/contact"
                     className="relative group overflow-hidden inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-bold text-white text-sm shadow-md shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
@@ -217,23 +158,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      {/* ── フッター ── */}
-      <footer className="bg-slate-950 py-8 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
-              <span className="text-white text-xs font-black">N</span>
-            </div>
-            <span className="font-black text-white">NextGrow</span>
-          </Link>
-          <div className="flex flex-wrap gap-6 text-xs text-gray-500 justify-center">
-            <a href="#" className="hover:text-gray-300 transition-colors">プライバシーポリシー</a>
-            <a href="#" className="hover:text-gray-300 transition-colors">特定商取引法に基づく表記</a>
-            <a href="#" className="hover:text-gray-300 transition-colors">お問い合わせ</a>
-          </div>
-          <p className="text-xs text-gray-600">© 2025 NextGrow Inc. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

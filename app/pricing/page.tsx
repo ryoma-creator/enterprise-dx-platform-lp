@@ -1,27 +1,18 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
   FiArrowRight, FiHeadphones, FiCheck, FiX,
   FiBarChart2, FiMap, FiSettings, FiDatabase,
   FiTrendingUp, FiUsers, FiMessageSquare, FiMail,
-  FiUserCheck, FiClock, FiAward,
+  FiUserCheck, FiClock,
 } from 'react-icons/fi'
-
-/* ── アニメーション helpers ── */
-function FadeUp({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay, ease: 'easeOut' }} className={className}>
-      {children}
-    </motion.div>
-  )
-}
+import { FadeUp } from '@/components/ui/animations'
+import Nav from '@/components/ui/Nav'
+import Footer from '@/components/ui/Footer'
 
 function FadeRow({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null)
@@ -36,16 +27,6 @@ function FadeRow({ children, delay = 0 }: { children: React.ReactNode; delay?: n
   )
 }
 
-/* ── Nav ── */
-const NAV_LINKS = [
-  { label: 'サービス',     href: '/#services' },
-  { label: '導入事例',    href: '/cases' },
-  { label: '選ばれる理由', href: '/#reasons' },
-  { label: '料金プラン',  href: '/pricing' },
-  { label: 'よくある質問', href: '/faq' },
-]
-
-/* ── プランデータ ── */
 const PLANS = [
   {
     id: 'starter',
@@ -99,7 +80,6 @@ const PLANS = [
   },
 ]
 
-/* ── 比較テーブルデータ ── */
 type Cell = boolean | string
 
 const COMPARISON: {
@@ -109,21 +89,19 @@ const COMPARISON: {
   standard: Cell
   premium: Cell
 }[] = [
-  { Icon: FiBarChart2, label: '現状分析・課題整理',         starter: true,            standard: true,             premium: true },
-  { Icon: FiMap,       label: 'DX戦略ロードマップの策定',   starter: true,            standard: true,             premium: true },
-  { Icon: FiSettings,  label: '業務プロセスの可視化',       starter: true,            standard: '対応（詳細分析付き）',  premium: '対応（全社プロセス対応）' },
-  { Icon: FiDatabase,  label: 'データ活用基盤の構築支援',   starter: false,           standard: true,             premium: '対応（本格構築支援）' },
-  { Icon: FiTrendingUp,label: '効果測定・改善提案',         starter: false,           standard: true,             premium: '対応（継続的な改善支援）' },
-  { Icon: FiUsers,     label: '定例ミーティング',           starter: '対応（月1回）',   standard: '対応（月2回）',   premium: '対応（月2回）' },
-  { Icon: FiMessageSquare, label: 'チャットサポート',       starter: true,            standard: true,             premium: '対応（優先対応）' },
-  { Icon: FiMail,      label: 'メールサポート',             starter: true,            standard: true,             premium: '対応（優先対応）' },
-  { Icon: FiUserCheck, label: '専任コンサルタントの伴走支援', starter: false,          standard: false,            premium: true },
-  { Icon: FiClock,     label: '24時間サポート対応',         starter: false,           standard: false,            premium: true },
+  { Icon: FiBarChart2,    label: '現状分析・課題整理',         starter: true,            standard: true,                      premium: true },
+  { Icon: FiMap,          label: 'DX戦略ロードマップの策定',   starter: true,            standard: true,                      premium: true },
+  { Icon: FiSettings,     label: '業務プロセスの可視化',       starter: true,            standard: '対応（詳細分析付き）',        premium: '対応（全社プロセス対応）' },
+  { Icon: FiDatabase,     label: 'データ活用基盤の構築支援',   starter: false,           standard: true,                      premium: '対応（本格構築支援）' },
+  { Icon: FiTrendingUp,   label: '効果測定・改善提案',         starter: false,           standard: true,                      premium: '対応（継続的な改善支援）' },
+  { Icon: FiUsers,        label: '定例ミーティング',           starter: '対応（月1回）',   standard: '対応（月2回）',             premium: '対応（月2回）' },
+  { Icon: FiMessageSquare, label: 'チャットサポート',          starter: true,            standard: true,                      premium: '対応（優先対応）' },
+  { Icon: FiMail,         label: 'メールサポート',             starter: true,            standard: true,                      premium: '対応（優先対応）' },
+  { Icon: FiUserCheck,    label: '専任コンサルタントの伴走支援', starter: false,          standard: false,                     premium: true },
+  { Icon: FiClock,        label: '24時間サポート対応',         starter: false,           standard: false,                     premium: true },
 ]
 
-/* ── セルコンポーネント ── */
 function PlanCell({ value, planId }: { value: Cell; planId: string }) {
-  const isGreen   = planId === 'starter'
   const isBlue    = planId === 'standard'
   const isGold    = planId === 'premium'
   const checkBg   = isGold ? 'bg-amber-500' : isBlue ? 'bg-blue-600' : 'bg-emerald-500'
@@ -150,36 +128,13 @@ function PlanCell({ value, planId }: { value: Cell; planId: string }) {
   )
 }
 
-/* ── メインページ ── */
 export default function PricingPage() {
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null)
 
   return (
     <div className="font-sans text-gray-900 overflow-x-hidden bg-white">
 
-      {/* ── ナビ ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-black">N</span>
-            </div>
-            <span className="font-black text-lg text-gray-900">NextGrow</span>
-          </Link>
-          <div className="hidden lg:flex items-center gap-7">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.label} href={link.href}
-                className={`text-sm font-medium transition-colors ${link.href === '/pricing' ? 'text-blue-600 border-b-2 border-blue-600 pb-0.5 font-bold' : 'text-gray-600 hover:text-blue-600'}`}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="#" className="hidden sm:block px-4 py-2 bg-gray-900 text-white hover:bg-gray-700 rounded-lg text-sm font-bold transition-all">資料ダウンロード</a>
-            <a href="/contact" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all shadow-sm">無料相談を予約する</a>
-          </div>
-        </div>
-      </nav>
+      <Nav />
 
       {/* ── ヒーロー ── */}
       <section className="pt-16 bg-white overflow-hidden">
@@ -217,7 +172,6 @@ export default function PricingPage() {
               const isOtherHovered = hoveredPlan !== null && !isHovered
               return (
                 <FadeUp key={plan.id} delay={i * 0.1} className="flex flex-col">
-                  {/* motion.div がバッジ含む全体を包む → バッジも一緒にスケール */}
                   <motion.div
                     onMouseEnter={() => setHoveredPlan(plan.id)}
                     onMouseLeave={() => setHoveredPlan(null)}
@@ -229,7 +183,6 @@ export default function PricingPage() {
                     style={{ transformOrigin: 'bottom center' }}
                     className="flex flex-col relative"
                   >
-                    {/* バッジ（または同じ高さのスペーサー） */}
                     {plan.badge ? (
                       <div className={`flex ${plan.id === 'premium' ? 'justify-end' : 'justify-center'} mb-[-1px] relative z-10`}>
                         <span className={`${plan.badgeColor} text-white text-xs font-bold px-5 py-1.5 rounded-t-lg`}>
@@ -240,12 +193,9 @@ export default function PricingPage() {
                       <div className="h-[30px]" />
                     )}
 
-                    {/* カード本体 */}
-                    <div
-                      className={`flex flex-col flex-1 rounded-2xl border ${plan.border} ${plan.shadow} p-7 cursor-pointer relative overflow-hidden
-                        ${plan.id === 'premium' ? 'bg-gradient-to-br from-white via-amber-50/40 to-orange-50/30' : 'bg-white'}`}
-                    >
-                      {/* Premiumの光彩エフェクト */}
+                    <div className={`flex flex-col flex-1 rounded-2xl border ${plan.border} ${plan.shadow} p-7 cursor-pointer relative overflow-hidden
+                      ${plan.id === 'premium' ? 'bg-gradient-to-br from-white via-amber-50/40 to-orange-50/30' : 'bg-white'}`}>
+
                       {plan.id === 'premium' && (
                         <motion.div
                           animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
@@ -255,7 +205,6 @@ export default function PricingPage() {
                         />
                       )}
 
-                      {/* Premiumのスパークル */}
                       {plan.id === 'premium' && (
                         <>
                           <span className="absolute top-4 right-12 text-amber-400 text-xs select-none">✦</span>
@@ -265,7 +214,6 @@ export default function PricingPage() {
                       )}
 
                       <div className="text-center relative">
-                        {/* アイコン */}
                         <div className={`w-14 h-14 rounded-full ${plan.iconBg} flex items-center justify-center mx-auto mb-3 text-2xl`}>
                           {plan.icon}
                         </div>
@@ -273,7 +221,6 @@ export default function PricingPage() {
                         <p className="text-xs text-gray-400 font-medium mb-3">{plan.label}</p>
                         <p className="text-xs text-gray-500 leading-relaxed mb-5">{plan.desc}</p>
 
-                        {/* 価格 */}
                         <div className="flex items-baseline justify-center gap-1 mb-6 relative">
                           {plan.id === 'premium' && (
                             <span className="absolute -left-2 top-0 text-amber-400 text-xs select-none">✦</span>
@@ -286,14 +233,11 @@ export default function PricingPage() {
                           )}
                         </div>
 
-                        {/* CTAボタン */}
                         <a href="/contact"
                           className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-bold text-sm transition-all ${plan.btnClass}`}>
                           無料相談を予約する
                           <motion.span
-                            animate={isHovered
-                              ? { x: [0, 5, 0, 5, 0] }
-                              : { x: 0 }}
+                            animate={isHovered ? { x: [0, 5, 0, 5, 0] } : { x: 0 }}
                             transition={isHovered
                               ? { duration: 0.7, repeat: Infinity, ease: 'easeInOut' }
                               : { duration: 0.2 }}
@@ -311,7 +255,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── 機能・サポート比較表 ── */}
+      {/* ── 比較表 ── */}
       <section className="py-14 bg-white">
         <div className="max-w-5xl mx-auto px-6">
           <FadeUp>
@@ -319,94 +263,54 @@ export default function PricingPage() {
           </FadeUp>
 
           <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            {/* テーブルヘッダー */}
             <FadeUp delay={0.05}>
               <div className="grid grid-cols-[1fr_130px_150px_130px] bg-white border-b border-gray-200">
                 <div className="px-6 py-4" />
-
-                {/* Starter ヘッダー */}
-                <motion.div
-                  animate={{ backgroundColor: hoveredPlan === 'starter' ? 'rgb(209 250 229)' : 'rgb(255 255 255)' }}
-                  transition={{ duration: 0.2 }}
-                  className="px-4 py-4 text-center"
-                  onMouseEnter={() => setHoveredPlan('starter')}
-                  onMouseLeave={() => setHoveredPlan(null)}
-                >
-                  <span className="text-lg">🌱</span>
-                  <p className="text-sm font-black text-emerald-600 mt-0.5">Starter</p>
-                </motion.div>
-
-                {/* Standard ヘッダー */}
-                <motion.div
-                  animate={{ backgroundColor: hoveredPlan === 'standard' ? 'rgb(219 234 254)' : 'rgb(255 255 255)' }}
-                  transition={{ duration: 0.2 }}
-                  className="px-4 py-4 text-center border-x border-blue-100"
-                  onMouseEnter={() => setHoveredPlan('standard')}
-                  onMouseLeave={() => setHoveredPlan(null)}
-                >
-                  <span className="text-lg">📊</span>
-                  <p className="text-sm font-black text-blue-600 mt-0.5">Standard</p>
-                  <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">おすすめ</span>
-                </motion.div>
-
-                {/* Premium ヘッダー */}
-                <motion.div
-                  animate={{ backgroundColor: hoveredPlan === 'premium' ? 'rgb(254 243 199)' : 'rgb(255 255 255)' }}
-                  transition={{ duration: 0.2 }}
-                  className="px-4 py-4 text-center"
-                  onMouseEnter={() => setHoveredPlan('premium')}
-                  onMouseLeave={() => setHoveredPlan(null)}
-                >
-                  <span className="text-lg">👑</span>
-                  <p className="text-sm font-black text-amber-500 mt-0.5">Premium</p>
-                </motion.div>
+                {(['starter', 'standard', 'premium'] as const).map((id) => {
+                  const plan = PLANS.find(p => p.id === id)!
+                  return (
+                    <motion.div key={id}
+                      animate={{ backgroundColor: hoveredPlan === id
+                        ? id === 'starter' ? 'rgb(209 250 229)' : id === 'standard' ? 'rgb(219 234 254)' : 'rgb(254 243 199)'
+                        : 'rgb(255 255 255)' }}
+                      transition={{ duration: 0.2 }}
+                      className={`px-4 py-4 text-center ${id === 'standard' ? 'border-x border-blue-100' : ''}`}
+                      onMouseEnter={() => setHoveredPlan(id)}
+                      onMouseLeave={() => setHoveredPlan(null)}
+                    >
+                      <span className="text-lg">{plan.icon}</span>
+                      <p className={`text-sm font-black mt-0.5 ${plan.nameColor}`}>{plan.name}</p>
+                      {id === 'standard' && (
+                        <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">おすすめ</span>
+                      )}
+                    </motion.div>
+                  )
+                })}
               </div>
             </FadeUp>
 
-            {/* 行 */}
             {COMPARISON.map((row, i) => (
               <FadeRow key={i} delay={i * 0.04}>
                 <div className={`grid grid-cols-[1fr_130px_150px_130px] items-center ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} border-b border-gray-100 last:border-0`}>
-                  {/* 機能名 */}
                   <div className="flex items-center gap-3 px-6 py-4">
                     <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
                       <row.Icon size={15} className="text-blue-500" />
                     </div>
                     <span className="text-sm font-medium text-gray-800">{row.label}</span>
                   </div>
-
-                  {/* Starter セル */}
-                  <motion.div
-                    animate={{ backgroundColor: hoveredPlan === 'starter' ? 'rgb(209 250 229 / 0.5)' : 'transparent' }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 py-4 flex justify-center"
-                    onMouseEnter={() => setHoveredPlan('starter')}
-                    onMouseLeave={() => setHoveredPlan(null)}
-                  >
-                    <PlanCell value={row.starter} planId="starter" />
-                  </motion.div>
-
-                  {/* Standard セル */}
-                  <motion.div
-                    animate={{ backgroundColor: hoveredPlan === 'standard' ? 'rgb(219 234 254 / 0.7)' : 'transparent' }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 py-4 flex justify-center border-x border-blue-100/60"
-                    onMouseEnter={() => setHoveredPlan('standard')}
-                    onMouseLeave={() => setHoveredPlan(null)}
-                  >
-                    <PlanCell value={row.standard} planId="standard" />
-                  </motion.div>
-
-                  {/* Premium セル */}
-                  <motion.div
-                    animate={{ backgroundColor: hoveredPlan === 'premium' ? 'rgb(254 243 199 / 0.6)' : 'transparent' }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 py-4 flex justify-center"
-                    onMouseEnter={() => setHoveredPlan('premium')}
-                    onMouseLeave={() => setHoveredPlan(null)}
-                  >
-                    <PlanCell value={row.premium} planId="premium" />
-                  </motion.div>
+                  {(['starter', 'standard', 'premium'] as const).map((id) => (
+                    <motion.div key={id}
+                      animate={{ backgroundColor: hoveredPlan === id
+                        ? id === 'starter' ? 'rgb(209 250 229 / 0.5)' : id === 'standard' ? 'rgb(219 234 254 / 0.7)' : 'rgb(254 243 199 / 0.6)'
+                        : 'transparent' }}
+                      transition={{ duration: 0.2 }}
+                      className={`px-4 py-4 flex justify-center ${id === 'standard' ? 'border-x border-blue-100/60' : ''}`}
+                      onMouseEnter={() => setHoveredPlan(id)}
+                      onMouseLeave={() => setHoveredPlan(null)}
+                    >
+                      <PlanCell value={row[id]} planId={id} />
+                    </motion.div>
+                  ))}
                 </div>
               </FadeRow>
             ))}
@@ -457,24 +361,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ── フッター ── */}
-      <footer className="bg-slate-950 py-8 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
-              <span className="text-white text-xs font-black">N</span>
-            </div>
-            <span className="font-black text-white">NextGrow</span>
-          </Link>
-          <div className="flex flex-wrap gap-6 text-xs text-gray-500 justify-center">
-            <a href="#" className="hover:text-gray-300 transition-colors">プライバシーポリシー</a>
-            <a href="#" className="hover:text-gray-300 transition-colors">特定商取引法に基づく表記</a>
-            <a href="#" className="hover:text-gray-300 transition-colors">お問い合わせ</a>
-          </div>
-          <p className="text-xs text-gray-600">© 2025 NextGrow Inc. All rights reserved.</p>
-        </div>
-      </footer>
-
+      <Footer />
     </div>
   )
 }
